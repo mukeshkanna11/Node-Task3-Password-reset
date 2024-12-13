@@ -34,8 +34,9 @@ const User = mongoose.model("User", UserSchema);
 
 // Routes
 app.get("/", (req, res) => {
-  res.send("Server is running");
+  res.send("Welcome to my deployed server on Render!");
 });
+
 
 //register user
 app.post("/auth/register", async (req, res) => {
