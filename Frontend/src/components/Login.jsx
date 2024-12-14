@@ -4,10 +4,43 @@ import { Link } from "react-router-dom";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Logged in with", { email, password });
+    setLoading(true);
+    setError("");
+
+    try {
+      const response = await fetch("https://node-task3-password-reset.onrender.com/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        // Handle error response from the server
+        setError(data.message || "Failed to login. Please try again.");
+        setLoading(false);
+        return;
+      }
+
+      // Handle successful login (e.g., saving token to localStorage)
+      console.log("Login successful:", data);
+      localStorage.setItem("token", data.token);
+      // Redirect or update UI after successful login
+    } catch (err) {
+      // Handle network or unexpected errors
+      console.error("Error logging in:", err);
+      setError("An unexpected error occurred. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -16,6 +49,11 @@ const Login = () => {
         <h2 className="mb-4 text-2xl italic font-bold text-center font-poppins">
           Login
         </h2>
+        {error && (
+          <div className="p-2 mb-4 text-sm text-red-500 bg-red-100 rounded">
+            {error}
+          </div>
+        )}
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="email"
@@ -36,8 +74,9 @@ const Login = () => {
           <button
             type="submit"
             className="w-full px-4 py-2 italic text-white bg-blue-500 rounded hover:bg-blue-600 font-poppins"
+            disabled={loading}
           >
-            Login
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 
