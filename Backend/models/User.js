@@ -15,4 +15,12 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
+// Hash reset token before saving
+userSchema.pre("save", async function (next) {
+  if (this.isModified("resetToken")) {
+    this.resetToken = await bcrypt.hash(this.resetToken, 10);
+  }
+  next();
+});
+
 module.exports = mongoose.model("User", userSchema);
