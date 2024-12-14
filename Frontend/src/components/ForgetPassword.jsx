@@ -9,7 +9,7 @@ const ForgotPassword = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://localhost:5000/auth/forgot-password", { email });
+      const response = await axios.post("https://node-task3-password-reset.onrender.com/auth/forgot-password", { email });
       setMessage(response.data.message); // Display the success message
     } catch (error) {
       setMessage(error.response?.data?.message || "An error occurred");

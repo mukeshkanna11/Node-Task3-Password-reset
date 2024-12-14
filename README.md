@@ -41,4 +41,4 @@ Authentication Routes
 /auth/reset-password/:token-POST-Resetpassword with token
 
 ## API POSTMAN DOCUMENTATION  LINK BELOW
-https://documenter.getpostman.com/view/38564093/2sAYBYepwe
+https://documenter.getpostman.com/view/38564093/2sAYHxojib

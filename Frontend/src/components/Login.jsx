@@ -5,21 +5,26 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
+    setMessage("");
 
     try {
-      const response = await fetch("https://node-task3-password-reset.onrender.com/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await fetch(
+        "https://node-task3-password-reset.onrender.com/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        }
+      );
 
       const data = await response.json();
 
@@ -33,7 +38,13 @@ const Login = () => {
       // Handle successful login (e.g., saving token to localStorage)
       console.log("Login successful:", data);
       localStorage.setItem("token", data.token);
-      // Redirect or update UI after successful login
+
+      // Display success message
+      setMessage("Login successful! Redirecting...");
+      setTimeout(() => {
+        // Redirect or perform further actions here
+        window.location.href = "/dashboard"; // Replace with your desired route
+      }, 2000); // Delay before redirecting
     } catch (err) {
       // Handle network or unexpected errors
       console.error("Error logging in:", err);
@@ -52,6 +63,11 @@ const Login = () => {
         {error && (
           <div className="p-2 mb-4 text-sm text-red-500 bg-red-100 rounded">
             {error}
+          </div>
+        )}
+        {message && (
+          <div className="p-2 mb-4 text-sm text-green-500 bg-green-100 rounded">
+            {message}
           </div>
         )}
         <form onSubmit={handleSubmit} className="space-y-4">

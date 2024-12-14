@@ -2,13 +2,51 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
 const Register = () => {
-  const [name, setName] = useState(""); // Added state for name
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Registered with", { name, email, password });
+    setError("");
+    setSuccess("");
+    setLoading(true);
+
+    try {
+      const response = await fetch(
+        "https://node-task3-password-reset.onrender.com/auth/register", // Replace with your backend deployment link
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ name, email, password }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        // Handle backend error messages
+        setError(data.message || "Failed to register. Please try again.");
+        setLoading(false);
+        return;
+      }
+
+      // Handle successful registration
+      setSuccess("Registration successful! Please login.");
+      setName("");
+      setEmail("");
+      setPassword("");
+    } catch (err) {
+      console.error("Error during registration:", err);
+      setError("An unexpected error occurred. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -17,6 +55,21 @@ const Register = () => {
         <h2 className="mb-4 text-2xl italic font-bold text-center font-poppins">
           Sign Up
         </h2>
+
+        {/* Success Message */}
+        {success && (
+          <div className="p-2 mb-4 text-sm text-green-600 bg-green-100 rounded">
+            {success}
+          </div>
+        )}
+
+        {/* Error Message */}
+        {error && (
+          <div className="p-2 mb-4 text-sm text-red-500 bg-red-100 rounded">
+            {error}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Name Input */}
           <input
@@ -49,8 +102,9 @@ const Register = () => {
           <button
             type="submit"
             className="w-full px-4 py-2 italic text-white bg-green-500 rounded hover:bg-green-600 font-poppins"
+            disabled={loading}
           >
-            Register
+            {loading ? "Registering..." : "Register"}
           </button>
         </form>
 
